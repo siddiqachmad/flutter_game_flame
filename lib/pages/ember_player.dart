@@ -78,6 +78,15 @@ class EmberPlayer extends SpriteAnimationComponent with CollisionCallbacks, Keyb
     }
 
     position += velocity * dt;
+
+    // If ember fell in pit, then game over.
+    if (position.y > game.size.y + size.y) {
+      game.health = 0;
+    }
+
+    if (game.health <= 0) {
+      removeFromParent();
+    }
     super.update(dt);
 
   }
@@ -125,6 +134,7 @@ class EmberPlayer extends SpriteAnimationComponent with CollisionCallbacks, Keyb
 
     if (other is Star) {
       other.removeFromParent();
+      game.starsCollected++;
     }
 
     if (other is WaterEnemy) {
@@ -136,6 +146,7 @@ class EmberPlayer extends SpriteAnimationComponent with CollisionCallbacks, Keyb
 
   void hit() {
     if (!hitByEnemy) {
+      game.health--;
       hitByEnemy = true;
     }
     add(

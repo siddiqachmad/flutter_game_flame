@@ -9,6 +9,7 @@ import 'package:flutter_flame_tutorial/managers/segment_manager.dart';
 import 'package:flutter_flame_tutorial/objects/ground_block.dart';
 import 'package:flutter_flame_tutorial/objects/platform_block.dart';
 import 'package:flutter_flame_tutorial/objects/star.dart';
+import 'package:flutter_flame_tutorial/overlays/hud.dart';
 import 'package:flutter_flame_tutorial/pages/ember_player.dart';
 
 class EmberQuestGame extends FlameGame with HasCollisionDetection,HasKeyboardHandlerComponents{
@@ -17,6 +18,9 @@ class EmberQuestGame extends FlameGame with HasCollisionDetection,HasKeyboardHan
   double objectSpeed = 0.0;
   late double lastBlockXPosition = 0.0;
   late UniqueKey lastBlockKey;
+
+  int starsCollected = 0;
+  int health = 3;
   Future<void> onLoad() async {
     // Load your game assets here
     await images.loadAll([
@@ -29,7 +33,7 @@ class EmberQuestGame extends FlameGame with HasCollisionDetection,HasKeyboardHan
       'water_enemy.png'
     ]);
     camera.viewfinder.anchor = Anchor.topLeft;
-    initializeGame();
+    initializeGame(true);
     // _ember = EmberPlayer(
     //   position: Vector2(128, canvasSize.y - 70),
     // );
@@ -73,7 +77,7 @@ class EmberQuestGame extends FlameGame with HasCollisionDetection,HasKeyboardHan
     }
   }
 
-  void initializeGame() {
+  void initializeGame(bool loadHud) {
     final segmentsToLoad = (size.x / 640).ceil();
     segmentsToLoad.clamp(0, segments.length);
 
@@ -85,11 +89,29 @@ class EmberQuestGame extends FlameGame with HasCollisionDetection,HasKeyboardHan
       position: Vector2(128, canvasSize.y - 128),
     );
     world.add(_ember);
+
+    if (loadHud) {
+      add(Hud());
+    }
+  }
+
+  void reset() {
+    starsCollected = 0;
+    health = 3;
+    initializeGame(false);
   }
 
   @override
   Color backgroundColor() {
     // TODO: implement backgroundColor
     return const Color.fromARGB(255, 173, 223, 247);
+  }
+
+  @override
+  void update(double dt) {
+    if (health <= 0) {
+      overlays.add('GameOver');
+    }
+    super.update(dt);
   }
 }

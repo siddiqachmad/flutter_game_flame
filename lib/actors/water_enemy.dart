@@ -45,7 +45,9 @@ class WaterEnemy extends SpriteAnimationComponent with HasGameReference<EmberQue
   void update(double dt) {
     velocity.x = game.objectSpeed;
     position += velocity * dt;
-    if (position.x < -size.x) removeFromParent();
+    if (position.x < -size.x || game.health <= 0) {
+      removeFromParent();
+    }
     super.update(dt);
   }
 }

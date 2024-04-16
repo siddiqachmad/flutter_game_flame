@@ -51,6 +51,9 @@ class GroundBlock extends SpriteComponent with HasGameReference<EmberQuestGame>{
         game.lastBlockXPosition = position.x + size.x - 10;
       }
     }
+    if (game.health <= 0) {
+      removeFromParent();
+    }
     super.update(dt);
   }
 }
