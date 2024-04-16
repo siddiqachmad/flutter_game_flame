@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_flame_tutorial/actors/water_enemy.dart';
@@ -10,7 +11,7 @@ import 'package:flutter_flame_tutorial/objects/platform_block.dart';
 import 'package:flutter_flame_tutorial/objects/star.dart';
 import 'package:flutter_flame_tutorial/pages/ember_player.dart';
 
-class EmberQuestGame extends FlameGame{
+class EmberQuestGame extends FlameGame with HasCollisionDetection,HasKeyboardHandlerComponents{
   EmberQuestGame();
   late EmberPlayer _ember;
   double objectSpeed = 0.0;
@@ -81,7 +82,7 @@ class EmberQuestGame extends FlameGame{
     }
 
     _ember = EmberPlayer(
-      position: Vector2(128, canvasSize.y - 70),
+      position: Vector2(128, canvasSize.y - 128),
     );
     world.add(_ember);
   }
