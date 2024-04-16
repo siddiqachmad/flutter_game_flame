@@ -12,6 +12,10 @@ class Block{
 
 final segments =[
   segment0,
+  segment1,
+  segment2,
+  segment3,
+  segment4,
 ];
 final segment0=[
   Block(Vector2(0, 0), GroundBlock),
