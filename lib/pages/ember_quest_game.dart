@@ -12,7 +12,7 @@ import 'package:flutter_flame_tutorial/objects/star.dart';
 import 'package:flutter_flame_tutorial/overlays/hud.dart';
 import 'package:flutter_flame_tutorial/pages/ember_player.dart';
 
-class EmberQuestGame extends FlameGame with HasCollisionDetection,HasKeyboardHandlerComponents{
+class EmberQuestGame extends FlameGame with HasCollisionDetection,HasKeyboardHandlerComponents,DragCallbacks{
   EmberQuestGame();
   late EmberPlayer _ember;
   double objectSpeed = 0.0;
@@ -21,6 +21,8 @@ class EmberQuestGame extends FlameGame with HasCollisionDetection,HasKeyboardHan
 
   int starsCollected = 0;
   int health = 3;
+  late JoystickComponent joystick;
+  @override
   Future<void> onLoad() async {
     // Load your game assets here
     await images.loadAll([
@@ -30,10 +32,14 @@ class EmberQuestGame extends FlameGame with HasCollisionDetection,HasKeyboardHan
       'heart.png',
       'heart_half.png',
       'star.png',
-      'water_enemy.png'
+      'water_enemy.png',
+      'Joystick.png',
+      'JumpButton.png',
+      'Knob.png'
     ]);
     camera.viewfinder.anchor = Anchor.topLeft;
     initializeGame(true);
+    addJoystick();
     // _ember = EmberPlayer(
     //   position: Vector2(128, canvasSize.y - 70),
     // );
@@ -78,6 +84,8 @@ class EmberQuestGame extends FlameGame with HasCollisionDetection,HasKeyboardHan
   }
 
   void initializeGame(bool loadHud) {
+    addJoystick();
+    addJumpButton();
     final segmentsToLoad = (size.x / 640).ceil();
     segmentsToLoad.clamp(0, segments.length);
 
@@ -93,6 +101,7 @@ class EmberQuestGame extends FlameGame with HasCollisionDetection,HasKeyboardHan
     if (loadHud) {
       add(Hud());
     }
+
   }
 
   void reset() {
@@ -112,6 +121,54 @@ class EmberQuestGame extends FlameGame with HasCollisionDetection,HasKeyboardHan
     if (health <= 0) {
       overlays.add('GameOver');
     }
+    updateJoystick();
     super.update(dt);
+  }
+
+  void addJoystick() {
+    joystick = JoystickComponent(
+      priority: 100,
+      knob: SpriteComponent(
+        priority: 100,
+        sprite: Sprite(images.fromCache('Knob.png')),
+      ),
+      background: SpriteComponent(
+        priority: 100,
+        sprite: Sprite(images.fromCache('Joystick.png')),
+      ),
+      margin: const EdgeInsets.only(left: 32, bottom: 32),
+      knobRadius: 32,
+    );
+    add(joystick);
+  }
+
+  void addJumpButton(){
+    final jumpButton = SpriteComponent(
+      sprite: Sprite(images.fromCache('JumpButton.png')),
+      position: Vector2(size.x - 64, size.y - 64),
+      size: Vector2.all(64),
+      anchor: Anchor.center,
+    );
+    add(jumpButton);
+  }
+
+
+  void updateJoystick() {
+    switch (joystick.direction) {
+      case JoystickDirection.left:
+      case JoystickDirection.upLeft:
+      case JoystickDirection.downLeft:
+        _ember.horizontalDirection = -1;
+        break;
+      case JoystickDirection.right:
+      case JoystickDirection.upRight:
+      case JoystickDirection.downRight:
+        _ember.horizontalDirection = 1;
+        break;
+      default:
+        _ember.horizontalDirection = 0;
+        break;
+    }
+
   }
 }
