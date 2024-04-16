@@ -44,8 +44,20 @@ class EmberQuestGame extends FlameGame{
           ));
           break;
         case Star:
+          world.add(
+            Star(
+              gridPosition: block.gridPosition,
+              xOffset: xPositionOffset,
+            ),
+          );
           break;
         case WaterEnemy:
+          world.add(
+            WaterEnemy(
+              gridPosition: block.gridPosition,
+              xOffset: xPositionOffset,
+            ),
+          );
           break;
       }
     }
