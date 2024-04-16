@@ -1,5 +1,9 @@
+import 'dart:math';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_flame_tutorial/managers/segment_manager.dart';
 import 'package:flutter_flame_tutorial/pages/ember_quest_game.dart';
 
 class GroundBlock extends SpriteComponent with HasGameReference<EmberQuestGame>{
@@ -7,7 +11,7 @@ class GroundBlock extends SpriteComponent with HasGameReference<EmberQuestGame>{
   double xOffset;
 
   final Vector2 velocity = Vector2.zero();
-
+  final UniqueKey _blockKey = UniqueKey();
   GroundBlock({
     required this.gridPosition,
     required this.xOffset,
@@ -22,12 +26,31 @@ class GroundBlock extends SpriteComponent with HasGameReference<EmberQuestGame>{
       game.size.y - gridPosition.y * size.y,
     );
     add(RectangleHitbox(collisionType: CollisionType.passive));
+
+    if (gridPosition.x == 9 && position.x > game.lastBlockXPosition) {
+      game.lastBlockKey = _blockKey;
+      game.lastBlockXPosition = position.x + size.x;
+    }
   }
 
   @override
   void update(double dt) {
     velocity.x = game.objectSpeed;
     position += velocity * dt;
+    if (position.x < -size.x) {
+      removeFromParent();
+      if (gridPosition.x == 0) {
+        game.loadGameSegments(
+          Random().nextInt(segments.length),
+          game.lastBlockXPosition,
+        );
+      }
+    }
+    if (gridPosition.x == 9) {
+      if (game.lastBlockKey == _blockKey) {
+        game.lastBlockXPosition = position.x + size.x - 10;
+      }
+    }
     super.update(dt);
   }
 }
