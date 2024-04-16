@@ -1,3 +1,4 @@
+import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 
 class EmberQuestGame extends FlameGame{
@@ -14,5 +15,7 @@ class EmberQuestGame extends FlameGame{
       'star.png',
       'water_enemy.png'
     ]);
+    camera.viewfinder.anchor = Anchor.topLeft;
   }
+
 }
